@@ -4,6 +4,7 @@ import { ApiService } from '../api.service';
 import { environment } from '../../environments/environment';
 import { ConstantsService } from '../services/constants.service';
 import { CommonHttpService } from '../services/common-http.service';
+import { LocalStorageService } from '../services/local-storage.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -14,12 +15,14 @@ import { Observable } from 'rxjs';
 export class LoginComponent implements OnInit {
 
   public activeTab = 'login-form';
-  private loginModel = {};
+  private loginModel: any = {};
+  private userModel: any = {};
 
   constructor(private router: Router,
     private apiservice: ApiService,
     private _constantsService: ConstantsService,
-    private _commonHttpService: CommonHttpService
+    private _commonHttpService: CommonHttpService,
+    private _localStorageService: LocalStorageService
   ) { }
 
   ngOnInit() {
@@ -31,21 +34,38 @@ export class LoginComponent implements OnInit {
 
   login() {
 
-    console.log("loginModel", this.loginModel);
+    const userData = {
+      'uname': this.loginModel.username,
+      'pass': this.loginModel.password
+    }
 
     var url = environment.apiBaseUrl + this._constantsService.loginApi;
-    this._commonHttpService.save(url, this.loginModel).then((res: any) => {
+    this._commonHttpService.save(url, userData).then((res: any) => {
       if (res.success) {
-        console.log("login Success", res.success);
+        this._localStorageService.setLocalStorageValByKey(res.user);
+        this.router.navigate(['/user-list']);
       } else {
         console.log("login Error", res.reject);
-        // if (typeof res.message === 'object') {
-        //   this.serverMessage = res.message;
-        // } else {
-
-        // }
       }
     });
+  }
+
+
+  saveUser() {
+
+    console.log("userModel..........", this.userModel);
+
+    var url = environment.apiBaseUrl + this._constantsService.signUpApi;
+    this._commonHttpService.save(url, this.userModel).then((res: any) => {
+      this.userModel = {};
+      if (res.success) {
+        console.log("signUp Success", res.user);
+        this.router.navigate(['/login']);
+      } else {
+        console.log("signUp Error", res.reject);
+      }
+    });
+
   }
 
 }

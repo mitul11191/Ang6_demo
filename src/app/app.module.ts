@@ -13,6 +13,7 @@ import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonHttpService } from './services/common-http.service';
+import { LocalStorageService } from './services/local-storage.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { CommonHttpService } from './services/common-http.service';
     FormsModule,
     HttpClientModule
   ],
-  providers: [CommonHttpService],
+  providers: [CommonHttpService, LocalStorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
